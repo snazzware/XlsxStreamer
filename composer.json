@@ -1,8 +1,12 @@
 {
     "name": "snazzware/XlsxStreamer",
+    "description": "A simple class for streaming data to .xlsx files.",
     "homepage": "https://github.com/snazzware/XlsxStreamer",
     "type": "library",
     "license": "MIT",
+    "require": {
+        "php": ">=5.5.30"
+    },
     "autoload": {
         "psr-4": {
             "Snazzware\\": "Classes/"
