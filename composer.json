@@ -1,5 +1,5 @@
 {
-    "name": "snazzware/XlsxStreamer",
+    "name": "snazzware/xlsx-streamer",
     "description": "A simple class for streaming data to .xlsx files.",
     "homepage": "https://github.com/snazzware/XlsxStreamer",
     "type": "library",
