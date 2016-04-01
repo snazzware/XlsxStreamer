@@ -1,0 +1,11 @@
+{
+    "name": "snazzware/XlsxStreamer",
+    "homepage": "https://github.com/snazzware/XlsxStreamer",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Snazzware\\": "Classes/"
+        }
+    }
+}
