@@ -107,20 +107,24 @@ class XlsxStreamer
 
         // Process each value
         foreach ($row as $value) {
-            // If value is not already in our dictionary, add it and increment our dictionary index
-            if (!isset($this->dictionary[$value])) {
-                $index = $this->dictionaryIndex;
-                $this->dictionary[$value] = $index;
-                ++$this->dictionaryIndex;
+            // convert column number in to excel column name
+            $colName = $this->eitoa($col);
+
+            // Init cell array
+            $cell = [
+                'r' => "{$colName}{$this->rowIndex}"
+            ];
+
+            // If $value is not numeric, look it up in our dictionary
+            if (!is_numeric($value)) {
+                $processedValue = $this->getDictionaryEntry($value);
+                $cell['t'] = 's';
             } else {
-                // Obtain index of value from our dictionary
-                $index = $this->dictionary[$value];
+                $processedValue = $value;
             }
 
-            $colName = $this->eitoa($col); // convert column number in to excel column name
-
             // Output column to sheet file
-            fwrite($this->sheet, "<c r=\"{$colName}{$this->rowIndex}\" t=\"s\"><v>{$index}</v></c>");
+            fwrite($this->sheet, $this->arrayToXmlStartTag('c',$cell)."<v>{$processedValue}</v></c>");
 
             // Increement our column counter
             ++$col;
@@ -185,7 +189,7 @@ class XlsxStreamer
      *
      * @return string excel column name
      */
-    public function eitoa($num)
+    protected function eitoa($num)
     {
         $numeric = ($num - 1) % 26;
         $letter = chr(65 + $numeric);
@@ -195,5 +199,43 @@ class XlsxStreamer
         } else {
             return $letter;
         }
+    }
+
+    /**
+     * Returns index in dictionary for given value. If value is not in dictionary
+     * already, value is added to dictionary and then index is returned.
+     *
+     * @param  String $value    Value to look up in dictionary
+     * @return Int              Dictionary index of $value
+     */
+    protected function getDictionaryEntry($value) {
+        // If value is not already in our dictionary, add it and increment our dictionary index
+        if (!isset($this->dictionary[$value])) {
+            $index = $this->dictionaryIndex;
+            $this->dictionary[$value] = $index;
+            ++$this->dictionaryIndex;
+        } else {
+            // Obtain index of value from our dictionary
+            $index = $this->dictionary[$value];
+        }
+
+        return $index;
+    }
+
+    /**
+     * Converts a key-value attribute array to an XML start tag.
+     *
+     * @param  String   $element      XML element that tag is for
+     * @param  Array    $attributes   key-value array of xml attributes and values
+     * @return String                 The XML start tag
+     */
+    protected function arrayToXmlStartTag($element,$attributes) {
+        $result = "<{$element}";
+
+        foreach ($attributes as $key=>$value) {
+            $result .= " {$key}=\"{$value}\" ";
+        }
+
+        return $result.'>';
     }
 }
